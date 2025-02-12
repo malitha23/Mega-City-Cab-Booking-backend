@@ -2,30 +2,32 @@ package athiq.veh.isn_backend.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class EmailService {
 
+    private final JavaMailSender javaMailSender;
 
-    private JavaMailSender javaMailSender;
+    public EmailService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
-    public void sendEmail(String toEmail, String subject, String messageText) {
+    public void sendEmail(String to, String subject, String body) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(toEmail);
-            message.setSubject(subject);
-            message.setText(messageText);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body, true);
             javaMailSender.send(message);
-        } catch (MailException e) {
-            // Handle other MailExceptions
+        } catch (MessagingException | MailException e) {
+            // Log the error
             e.printStackTrace();
         }
     }
-
 }
