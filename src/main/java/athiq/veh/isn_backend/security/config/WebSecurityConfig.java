@@ -7,6 +7,7 @@ import athiq.veh.isn_backend.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -77,6 +78,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/blobs/fetch/**").permitAll()
                                 .requestMatchers("/uploads/**").permitAll()
                                 .requestMatchers("/api/files/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/items/**").permitAll()
                                 .requestMatchers("/api/roles/**").hasRole("ADMIN")
                                 .requestMatchers("/api/roles/**").hasRole("USER")
                                 .anyRequest().authenticated()

@@ -8,6 +8,7 @@ import athiq.veh.isn_backend.model.Item;
 import athiq.veh.isn_backend.model.User;
 import athiq.veh.isn_backend.service.AuthService;
 import athiq.veh.isn_backend.service.ItemService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -96,10 +97,14 @@ public ResponseEntity<List<ItemResponseDTO>> getItemsBySubcategoryId(@PathVariab
         return itemService.findByCategoryId(categoryId);
     }
 
-    @PostMapping
-    public ResponseEntity<ItemResponseDTO> addItem(@RequestPart(name = "data") CreateItemRequestDTO requestDTO, @RequestPart("file") MultipartFile file) throws IOException {
+    @PostMapping(value = "/add", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ItemResponseDTO> addItem(
+            @RequestPart(name = "data") CreateItemRequestDTO requestDTO,
+            @RequestPart("file") MultipartFile file
+    ) throws IOException {
         return ResponseEntity.ok(this.itemService.createItem(requestDTO, file));
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<ItemResponseDTO> updateItem(@PathVariable Long id, @RequestPart("data") CreateItemRequestDTO requestDTO, @RequestPart("file") MultipartFile file) throws IOException {
