@@ -4,6 +4,7 @@ public record SignUpRequestDTO(
         String email,
         String password,
         String firstName,
-        String lastName
+        String lastName,
+        String username
 ) {
 }

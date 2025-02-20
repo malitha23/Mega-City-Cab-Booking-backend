@@ -23,7 +23,9 @@ public record CreateItemResponseDTO(
         String status,
         String licensePlate,
 
-
+        Double defaultTaxRate,   // ✅ Added Default Tax Rate (%)
+        Double additionalTaxRate, // ✅ Added Additional Tax Rate (%)
+        Integer defaultTaxDays,   // ✅ Added Default Tax Days
 
         Integer categoryId,
         Integer subCategoryId,

@@ -50,6 +50,7 @@ public class UserService {
                     user.getEmail(),
                     user.getFirstName(),
                     user.getLastName(),
+                    
                     user.getImageUrl(),
                     user.getImageBlob(),
                     getRole(user)
@@ -71,6 +72,7 @@ public class UserService {
                         user.getEmail(),
                         user.getFirstName(),
                         user.getLastName(),
+                        
                         user.getImageUrl(),
                         user.getImageBlob(),
                         getRole(user)
@@ -85,6 +87,7 @@ public class UserService {
                         user.getEmail(),
                         user.getFirstName(),
                         user.getLastName(),
+                        
                         user.getImageUrl(),
                         user.getImageBlob(),
                         getRole(user)
@@ -115,6 +118,7 @@ public class UserService {
                     updatedUser.getEmail(),
                     updatedUser.getFirstName(),
                     updatedUser.getLastName(),
+                    updatedUser.getImageUrl(),
                     BlobMapper.INSTANCE.toDto(updatedUser.getImageBlob()),
                     updatedUser.getRole()
             );
@@ -133,6 +137,7 @@ public class UserService {
                         user.getEmail(),
                         user.getFirstName(),
                         user.getLastName(),
+                        
                         user.getImageUrl(),
                         user.getImageBlob(),
                         getRole(user)

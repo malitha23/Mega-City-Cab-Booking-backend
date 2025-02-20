@@ -21,11 +21,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> optionalUser = userRepository.findByEmail(username);
 
         if (optionalUser.isEmpty()) {
-            throw new UsernameNotFoundException("User Not Found with email: " + email);
+            throw new UsernameNotFoundException("User Not Found with username: " + username);
         }
 
         return UserDetailsImpl.build(optionalUser.get());

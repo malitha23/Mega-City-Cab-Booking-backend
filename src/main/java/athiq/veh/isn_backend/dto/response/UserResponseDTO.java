@@ -7,6 +7,9 @@ public record UserResponseDTO(
         String email,
         String firstName,
         String lastName,
+
+        String imageurl,
+
         BlobResponseDTO imageBlob,
         Role role
 ) {

@@ -1,4 +1,5 @@
 package athiq.veh.isn_backend.controller.auth;
+import athiq.veh.isn_backend.dto.response.UserResponseDTO;
 import org.springframework.web.bind.annotation.*;
 import athiq.veh.isn_backend.dto.auth.ChangePasswordRequestDTO;
 
@@ -64,15 +65,14 @@ public class UsersController {
     @PutMapping("/updateDetails")
     public ResponseEntity<String> updateUserDetails(@RequestParam("firstName") String firstName,
                                                     @RequestParam("lastName") String lastName,
-                                                    @RequestParam("designation") Long designation,
+                                                    @RequestParam("email") String email,
                                                     @RequestHeader("Authorization") String token) {
         logger.info("Received request to update user details");
         logger.info("First name: {}", firstName);
         logger.info("Last name: {}", lastName);
-        logger.info("designation: {}", designation);
         logger.info("Authorization token: {}", token);
 
-        return userService.updateUserDetails(firstName, lastName,designation,token);
+        return userService.updateUserDetails(firstName, lastName, email, token);
     }
 
 //    @GetMapping("/profile")
@@ -89,6 +89,12 @@ public class UsersController {
 
         return userService.changePassword(request, token);
     }
+
+   @GetMapping("/getUserData")
+   public UserResponseDTO getUserData(@RequestHeader("Authorization") String token) {
+     return userService.getUserData(token);  // Ensure this method returns ResponseEntity<UserResponseDTO>
+   }
+
 
     @PutMapping("/deactivate")
     public ResponseEntity<?> deactivateAccount() {

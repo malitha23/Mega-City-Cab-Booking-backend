@@ -1,5 +1,6 @@
 package athiq.veh.isn_backend.dto.auth;
-//UserDTO.java
+
+// UserDTO.java
 public class UserDTO {
     private Long id;
     private String firstName;
@@ -13,6 +14,7 @@ public class UserDTO {
         this.firstName = firstName;
         this.lastName = lastName;
         this.imageUrl = imageUrl;
+
     }
 
     // Getters and Setters
@@ -27,4 +29,5 @@ public class UserDTO {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
 }

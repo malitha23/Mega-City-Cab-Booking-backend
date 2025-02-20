@@ -54,6 +54,16 @@ public class Item extends AbstractAuditable  {
 
     private String licensePlate;
 
+    // ✅ Added tax fields
+    @Column(nullable = true, columnDefinition = "DECIMAL(5,2) DEFAULT 0.00")
+    private Double defaultTaxRate;  // Default Tax Rate (%)
+
+    @Column(nullable = true, columnDefinition = "DECIMAL(5,2) DEFAULT 0.00")
+    private Double additionalTaxRate;  // Additional Tax Rate (%)
+
+    @Column(nullable = true, columnDefinition = "INT DEFAULT 3")
+    private Integer defaultTaxDays;  // Default Tax Days
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "item_tag",

@@ -27,6 +27,10 @@ public record ItemResponseDTO(
         String status,
         String licensePlate,
 
+        Double defaultTaxRate,   // ✅ Added Default Tax Rate (%)
+        Double additionalTaxRate, // ✅ Added Additional Tax Rate (%)
+        Integer defaultTaxDays,   // ✅ Added Default Tax Days
+
 
         Set<Tag> tags,
         BlobResponseDTO imageBlob,

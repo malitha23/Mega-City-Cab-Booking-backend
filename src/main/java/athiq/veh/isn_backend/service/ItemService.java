@@ -58,7 +58,9 @@ public class ItemService {
                     item.getDeposit(),
                     item.getStatus(),
                     item.getLicensePlate(),
-
+                    item.getDefaultTaxRate(),   // ✅ Added Default Tax Rate (%)
+                    item.getAdditionalTaxRate(), // ✅ Added Additional Tax Rate (%)
+                    item.getDefaultTaxDays(),   // ✅ Added Default Tax Days
                     item.getTags(),
                     BlobMapper.INSTANCE.toDto(item.getImageBlob()),
                     item.getSubcategory(),
@@ -115,7 +117,9 @@ public class ItemService {
                 savedItem.getDeposit(),
                 savedItem.getStatus(),
                 savedItem.getLicensePlate(),
-
+                savedItem.getDefaultTaxRate(),   // ✅ Added Default Tax Rate (%)
+                savedItem.getAdditionalTaxRate(), // ✅ Added Additional Tax Rate (%)
+                savedItem.getDefaultTaxDays(),   // ✅ Added Default Tax Days
                 savedItem.getTags(),
                 BlobMapper.INSTANCE.toDto(savedItem.getImageBlob()),
                 savedItem.getSubcategory(),
@@ -181,7 +185,9 @@ public class ItemService {
                     updatedItem.getDeposit(),
                     updatedItem.getStatus(),
                     updatedItem.getLicensePlate(),
-
+                    updatedItem.getDefaultTaxRate(),   // ✅ Added Default Tax Rate (%)
+                    updatedItem.getAdditionalTaxRate(), // ✅ Added Additional Tax Rate (%)
+                    updatedItem.getDefaultTaxDays(),   // ✅ Added Default Tax Days
                     updatedItem.getTags(),
                     BlobMapper.INSTANCE.toDto(updatedItem.getImageBlob()),
                     updatedItem.getSubcategory(),
@@ -236,6 +242,9 @@ public class ItemService {
                     item.getDeposit(),
                     item.getStatus(),
                     item.getLicensePlate(),
+                    item.getDefaultTaxRate(),   // ✅ Added Default Tax Rate (%)
+                    item.getAdditionalTaxRate(), // ✅ Added Additional Tax Rate (%)
+                    item.getDefaultTaxDays(),   // ✅ Added Default Tax Days
 
                     item.getTags(),
                     BlobMapper.INSTANCE.toDto(item.getImageBlob()),
@@ -273,7 +282,9 @@ public class ItemService {
                     item.getDeposit(),
                     item.getStatus(),
                     item.getLicensePlate(),
-
+                    item.getDefaultTaxRate(),   // ✅ Added Default Tax Rate (%)
+                    item.getAdditionalTaxRate(), // ✅ Added Additional Tax Rate (%)
+                    item.getDefaultTaxDays(),   // ✅ Added Default Tax Days
                     item.getTags(),
                     BlobMapper.INSTANCE.toDto(item.getImageBlob()),
                     item.getSubcategory(),
@@ -366,6 +377,9 @@ item.setStatus(status);
                 updatedItem.getDeposit(),
                 updatedItem.getStatus(),
                 updatedItem.getLicensePlate(),
+                item.getDefaultTaxRate(),   // ✅ Added Default Tax Rate (%)
+                item.getAdditionalTaxRate(), // ✅ Added Additional Tax Rate (%)
+                item.getDefaultTaxDays(),   // ✅ Added Default Tax Days
 
                 updatedItem.getTags(),
                 BlobMapper.INSTANCE.toDto(updatedItem.getImageBlob()),

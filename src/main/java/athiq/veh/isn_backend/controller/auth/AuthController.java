@@ -37,6 +37,17 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @GetMapping("/validate-token")
+    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
+        try {
+            String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+            boolean isValid = jwtUtils.validateJwtToken(jwtToken);
+            return ResponseEntity.ok(isValid);
+        } catch (Exception e) {
+            return ResponseEntity.ok(false);
+        }
+    }
+
 
     private String getRole(User user) {
         return user.getRole() != null ? user.getRole().getAuthority().name() : "Unknown"; // Get role as string
@@ -49,6 +60,7 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password())
         );
+        System.out.println("Attempting login with first name: " + loginRequest.email());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
@@ -77,13 +89,47 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpRequestDTO signUpRequest) {
-
+        // Register the user
         User user = this.authService.signup(signUpRequest);
 
-        return ResponseEntity.ok(new SignUpOTPResponseDTO("User signing is initiated." +
-                "An OTP sent to your organization email ", user.getEmail(), user.getOtpExpireDate()));
+        // Activate the user immediately after registration
+        String activationMessage = "User signing is initiated. An OTP has been sent to your organization email: "
+                + user.getEmail() + ". OTP expires on: " + user.getOtpExpireDate();
+        String expirationTime = user.getOtpExpireDate().toString();
+        // Authenticate user manually after signup
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signUpRequest.email(), signUpRequest.password())
+        );
 
+        // Set authentication context
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Generate JWT token
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        // Get user details
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        UserMinDTO userMinDTO = new UserMinDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getImageUrl(),
+                user.getImageBlob(),
+                getRole(user)
+        );
+
+        // Return activation message, JWT token, and user details
+        return ResponseEntity.ok(new SignUpResponseDTO(
+                activationMessage,
+                expirationTime,
+                jwt,
+                userMinDTO,
+                userDetails.getAuthorities()
+        ));
     }
+
 
     @PostMapping("/otp/validate")
     public ResponseEntity<?> validateOtp(@RequestBody OtpValidateRequestDTO otpRequest) {

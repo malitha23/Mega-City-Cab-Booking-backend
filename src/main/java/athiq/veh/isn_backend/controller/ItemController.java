@@ -62,7 +62,9 @@ public class ItemController {
                     item.getDeposit(),
                     item.getStatus(),
                     item.getLicensePlate(),
-
+                    item.getDefaultTaxRate(),   // ✅ Added Default Tax Rate (%)
+                    item.getAdditionalTaxRate(), // ✅ Added Additional Tax Rate (%)
+                    item.getDefaultTaxDays(),   // ✅ Added Default Tax Days
                     item.getTags(),
                     BlobMapper.INSTANCE.toDto(item.getImageBlob()),
                     item.getSubcategory(),

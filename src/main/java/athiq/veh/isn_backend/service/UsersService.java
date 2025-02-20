@@ -1,6 +1,10 @@
 package athiq.veh.isn_backend.service;
 import athiq.veh.isn_backend.constant.RoleAuthorityEnum;
+import athiq.veh.isn_backend.dto.auth.UserDTO;
 import athiq.veh.isn_backend.dto.response.DefaultResponseDTO;
+import athiq.veh.isn_backend.dto.response.UserResponseDTO;
+import athiq.veh.isn_backend.exception.ResourceNotFoundException;
+import athiq.veh.isn_backend.mapper.BlobMapper;
 import athiq.veh.isn_backend.model.Role;
 import athiq.veh.isn_backend.security.service.UserDetailsImpl;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +54,8 @@ public class UsersService {
     @Autowired
     private BlobService blobService;
 
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -85,7 +91,23 @@ public class UsersService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
             }
 
-            // Save the file
+            // **Delete previous image**
+            if (user.getImageUrl() != null && !user.getImageUrl().isEmpty()) {
+                String previousImagePath = user.getImageUrl().replace(
+                        ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/files/").toUriString(),
+                        "uploads/"
+                );
+
+                Path previousFilePath = Paths.get(previousImagePath);
+                try {
+                    Files.deleteIfExists(previousFilePath);
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Failed to delete previous image: " + e.getMessage());
+                }
+            }
+
+            // Save new file
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             String uploadDir = "uploads";
             Path uploadPath = Paths.get(uploadDir);
@@ -101,7 +123,7 @@ public class UsersService {
                 Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             }
 
-            // Generate file URL
+            // Generate new file URL
             String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path("/api/files/")
                     .path(fileName)
@@ -114,38 +136,54 @@ public class UsersService {
             return ResponseEntity.ok("Image uploaded successfully");
 
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to upload image: " + e.getMessage());
         }
     }
 
 
 
+
     @Transactional
-    public ResponseEntity<String> updateUserDetails(String firstName, String lastName, Long designationId, String token) {
+    public ResponseEntity<String> updateUserDetails(String firstName, String lastName, String email, String token) {
         try {
             // Extract JWT token from Authorization header
             String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
             // Get email from JWT token
-            String email = jwtUtils.getUserNameFromJwtToken(jwtToken);
-            logger.debug("Extracted email from JWT token: {}", email);
+            String emailget = jwtUtils.getUserNameFromJwtToken(jwtToken);
+            logger.debug("Extracted email from JWT token: {}", emailget);
 
             // Fetch user
-            Optional<User> optionalUser = userRepository.findByEmail(email);
+            Optional<User> optionalUser = userRepository.findByEmail(emailget);
             User user = optionalUser.orElse(null);
 
             if (user == null) {
-                logger.warn("User with email {} not found", email);
+                logger.warn("User with email {} not found", emailget);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
             }
 
             // Update the user's first and last names
             user.setFirstName(firstName);
             user.setLastName(lastName);
-
+            user.setEmail(email);
             userRepository.save(user);
-            logger.info("User details updated successfully for email {}", email);
 
+            // If the email is changing, send a verification email
+            if (!emailget.equals(email)) {
+
+                String subject = "Your New Email Address Is Updated";
+                String body = "<p>Hello, " + firstName + "!</p>" +
+                        "<p>Your new email address has been updated. Please log in using the new email address.</p>";
+
+                emailService.sendEmail(email, subject, body);
+
+                return ResponseEntity.status(HttpStatus.ACCEPTED)
+                        .body("Email change initiated. Please verify your new email.");
+            }
+
+
+            logger.info("User details updated successfully for email {}", email);
             return ResponseEntity.ok("User details updated successfully");
         } catch (Exception e) {
             logger.error("Unexpected error updating user details", e);
@@ -154,6 +192,39 @@ public class UsersService {
         }
     }
 
+
+    public UserResponseDTO getUserData(String token) {
+
+        logger.info("Received request to get user data");
+        logger.info("Authorization token: {}", token);
+
+        // Extract JWT token from Authorization header
+        String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+        // Get email from JWT token
+        String email = jwtUtils.getUserNameFromJwtToken(jwtToken);
+        logger.debug("Extracted email from JWT token: {}", email);
+
+        // Fetch user
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+
+            return new UserResponseDTO(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getImageUrl(),
+                    BlobMapper.INSTANCE.toDto(user.getImageBlob()),
+                    user.getRole()
+            );
+        } else {
+            throw new ResourceNotFoundException("user not found");
+        }
+    }
 
 
     // Change password service
