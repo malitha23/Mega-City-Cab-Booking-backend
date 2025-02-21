@@ -10,18 +10,22 @@ import java.time.LocalDateTime;
 public class ResponseBookingDto {
 
     private Long bookingId;
-    private Long customerId;  // Customer ID to identify the user
+    private Long customerId;  // Assuming the customer is required to make a booking
     private String destination;
     private String pickUpLocation;
     private LocalDateTime bookingDate;
     private double price;
-    private double totalAmount;  // Total amount after taxes
     private String phone;
     private String address;
     private String nic;
-    private int days;
-    private double totalPrice;  // Total price before taxes
+    private int days; // Number of days for the booking
 
-    private Long driverId;  // Optional driver ID for the booking (may or may not be assigned)
+    private double totalPrice;
+
+    private int status;
+
+    private Long driverId;  // Optional field to set the driver for the booking
+
+    private Long vehicleId;
 
 }

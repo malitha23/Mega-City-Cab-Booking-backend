@@ -19,6 +19,11 @@ public class RequestBookingDto {
     private String nic;
     private int days; // Number of days for the booking
 
+    private double totalPrice;
+
+    private int status;
+
     private Long driverId;  // Optional field to set the driver for the booking
 
+    private Long vehicleId;  // New field to store the ID of the vehicle associated with the booking
 }

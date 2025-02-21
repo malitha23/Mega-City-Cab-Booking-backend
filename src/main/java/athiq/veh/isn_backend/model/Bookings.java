@@ -29,8 +29,6 @@ public class Bookings extends AbstractAuditable {
 
     private double price;
 
-    private double totalAmount;
-
     private String phone;
 
     private String address;
@@ -41,8 +39,16 @@ public class Bookings extends AbstractAuditable {
 
     private double totalPrice; // New field for the total price
 
-    @ManyToOne(fetch = FetchType.LAZY) // Assuming the role is related to booking.
-    @JoinColumn(name = "driver_id", referencedColumnName = "id", nullable = true) // Nullable is true to allow null values
-    private User driver;  // Assuming User is related to driver, you can use a separate Driver class if needed.
+    private int status; // Default value is false
 
+    @Column(name = "driver_id", nullable = true)
+    private Long driverId;
+
+    // Assuming you have a Vehicle entity that represents the vehicle information.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", referencedColumnName = "id", nullable = false)
+    private Item item;  // The vehicle entity associated with the booking
+
+    // If you just want to store the vehicleId as a long (without associating it with a Vehicle entity):
+    // private Long vehicleId;
 }
