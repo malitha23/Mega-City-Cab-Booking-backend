@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,23 @@ public class BookingController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
+
+    @DeleteMapping("/delete/{bookingId}")
+    public ResponseEntity<?> deleteBooking(@PathVariable("bookingId") Long bookingId,
+                                           @RequestHeader("Authorization") String token) {
+        // Assuming bookingService.deleteBooking(bookingId, token) returns a success message or a success status
+        boolean success = bookingService.deleteBooking(bookingId, token).hasBody();
+        if (success) {
+            return ResponseEntity.ok(new HashMap<String, String>() {{
+                put("message", "Booking deleted successfully");
+            }});
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HashMap<String, String>() {{
+                put("message", "Failed to delete booking");
+            }});
+        }
+    }
+
 
     @GetMapping("/user")
     public ResponseEntity<List<BookingWithItemResponseDTO>> getUserBookings(@RequestHeader("Authorization") String token) {
@@ -84,6 +102,7 @@ public class BookingController {
                 item.getTransmission(),
                 item.getSeatingCapacity(),
                 item.getColor(),
+                item.getImageBlob(),
                 item.getYearOfManufacture(),
 
                 // Add additional fields for vehicle

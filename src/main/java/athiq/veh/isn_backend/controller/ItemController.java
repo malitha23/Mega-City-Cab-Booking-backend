@@ -81,6 +81,19 @@ public class ItemController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ItemResponseDTO>> getItemBySearch(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String subcategory) {
+
+        // Call the service layer to handle the search logic
+        List<ItemResponseDTO> items = itemService.searchItems(name, category, subcategory);
+
+        // Return the found items as a response
+        return ResponseEntity.ok(items);
+    }
+
 
     //    @GetMapping("/subcategory/{subcategoryId}")
 //    public List<Item> getItemsBySubcategoryId(@PathVariable Integer subcategoryId) {

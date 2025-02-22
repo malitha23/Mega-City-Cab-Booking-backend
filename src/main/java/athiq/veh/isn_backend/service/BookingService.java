@@ -79,6 +79,62 @@ public class BookingService {
         return bookings;
     }
 
+    public ResponseEntity<String> deleteBooking(Long bookingId, String token) {
+        try {
+            String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+            // Get email from JWT token
+            String email = jwtUtils.getUserNameFromJwtToken(jwtToken);
+
+            // Fetch user
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found for email: " + email));
+
+            // Find the booking by ID and ensure the user owns the booking (you might need to adjust this logic)
+            Optional<Bookings> optionalBooking = bookingRepository.findById(bookingId);
+
+            if (optionalBooking.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking not found");
+            }
+
+            Bookings booking = optionalBooking.get();
+
+            // Check if the booking belongs to the authenticated user
+            if (!booking.getCustomer().equals(user)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only delete your own bookings");
+            }
+
+            // Delete the booking
+            bookingRepository.delete(booking);
+
+            // Optionally, send an email to the user notifying them of the cancellation
+            sendBookingCancelledEmailToUser(user.getEmail(), user.getFirstName(), booking);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Booking deleted successfully");
+
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the booking");
+        }
+    }
+
+    public void sendBookingCancelledEmailToUser(String userEmail, String fname, Bookings booking) {
+        String bookingId = String.valueOf(booking.getBookingId()); // Assuming getBookingId() returns a String
+        String subject = "Booking Cancellation Confirmation";
+        String body = "<html>" +
+                "<body>" +
+                "<h2>Dear " + fname + ",</h2>" +
+                "<p>Your booking with ID <strong>" + bookingId + "</strong> has been successfully cancelled.</p>" +
+                "<p>If you have any questions or concerns, please feel free to contact us.</p>" +
+                "<br>" +
+                "<p>Best regards,</p>" +
+                "<p>Your Team</p>" +
+                "</body>" +
+                "</html>";
+
+        emailService.sendEmail(userEmail, subject, body);
+    }
+
 
 
     public ResponseEntity<Bookings> createBooking(RequestBookingDto requestDto, String token) {

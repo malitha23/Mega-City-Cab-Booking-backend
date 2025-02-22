@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -35,6 +36,49 @@ public class ItemService {
         this.blobService = blobService;
         this.savedRepository = savedRepository;
     }
+
+    public List<ItemResponseDTO> searchItems(String name, String categoryId, String subcategoryId) {
+        Long categoryIdLong = categoryId != null ? Long.valueOf(categoryId) : null;
+        Long subcategoryIdLong = subcategoryId != null ? Long.valueOf(subcategoryId) : null;
+
+        // Call the repository method with the converted values
+        List<Item> items = itemRepository.findItemsBySearchCriteria(categoryIdLong, subcategoryIdLong, name);
+
+        // Convert entities to DTOs
+        return items.stream()
+                .map(item -> new ItemResponseDTO(
+                        item.getId(),
+                        item.getDescription(),
+                        item.getName(),
+                        item.getIsBooked(),
+                        item.getMileage(),
+                        item.getFuelType(),
+                        item.getPrice(),
+                        item.getTransmission(),
+                        item.getSeatingCapacity(),
+                        item.getLuggageCapacity(),
+                        item.getColor(),
+                        item.getYearOfManufacture(),
+                        item.getEngineCapacity(),
+                        item.getFuelEfficiency(),
+                        item.getDeposit(),
+                        item.getStatus(),
+                        item.getLicensePlate(),
+                        item.getDefaultTaxRate(),
+                        item.getAdditionalTaxRate(),
+                        item.getDefaultTaxDays(),
+                        item.getTags(),
+                        BlobMapper.INSTANCE.toDto(item.getImageBlob()),
+                        item.getSubcategory(),
+                        item.getCategory(),
+                        UserMapper.INSTANCE.toUserMinDTO(item.getCreatedBy()),
+                        UserMapper.INSTANCE.toUserMinDTO(item.getLastModifiedBy()),
+                        item.getCreatedDatetime(),
+                        item.getLastModifiedDatetime()
+                ))
+                .collect(Collectors.toList());
+    }
+
 
     public List<ItemResponseDTO> findAll() {
         var itemList = itemRepository.findAll();

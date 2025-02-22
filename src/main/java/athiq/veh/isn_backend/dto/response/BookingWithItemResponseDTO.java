@@ -1,5 +1,6 @@
 package athiq.veh.isn_backend.dto.response;
 
+import athiq.veh.isn_backend.model.FileBlob;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,6 +30,7 @@ public class BookingWithItemResponseDTO {
     private String vehicleTransmission;
     private String vehicleSeatingCapacity;
     private String vehicleColor;
+    private FileBlob vehicleImageUrl;
     private String vehicleYearOfManufacture;
     private String vehicleEngineCapacity;
     private String vehicleFuelEfficiency;
@@ -45,7 +47,7 @@ public class BookingWithItemResponseDTO {
                                       String nic, int days, double totalPrice, int status, Long driverId,
                                       String vehicleName, String vehicleDescription, String vehicleMileage,
                                       String vehicleFuelType, String vehicleTransmission, String vehicleSeatingCapacity,
-                                      String vehicleColor, String vehicleYearOfManufacture,
+                                      String vehicleColor, FileBlob vehicleImageUrl, String vehicleYearOfManufacture,
                                       String vehicleEngineCapacity, String vehicleFuelEfficiency, String vehicleDeposit,
                                       String vehicleLicensePlate, Double defaultTaxRate, Double additionalTaxRate, Integer defaultTaxDays) {
         this.bookingId = bookingId;
@@ -67,6 +69,7 @@ public class BookingWithItemResponseDTO {
         this.vehicleTransmission = vehicleTransmission;
         this.vehicleSeatingCapacity = vehicleSeatingCapacity;
         this.vehicleColor = vehicleColor;
+        this.vehicleImageUrl = vehicleImageUrl;
         this.vehicleYearOfManufacture = vehicleYearOfManufacture;
         this.vehicleEngineCapacity = vehicleEngineCapacity;
         this.vehicleFuelEfficiency = vehicleFuelEfficiency;
